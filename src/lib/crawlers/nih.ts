@@ -5,7 +5,7 @@ const parser = new Parser({ timeout: 10000 })
 
 export async function crawlNIH(): Promise<RawArticle[]> {
   const feed = await parser.parseURL(
-    'https://www.nih.gov/news-events/news-releases/feed.xml'
+    'https://newsinhealth.nih.gov/feeds/all.rss'
   )
   return feed.items
     .slice(0, 20)

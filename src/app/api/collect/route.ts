@@ -59,8 +59,12 @@ async function handleCollect() {
       summary,
     })
 
-    if (!error) saved++
-    else errors++
+    if (!error) {
+      saved++
+    } else {
+      console.error('[insert error]', error.message, '|', article.url)
+      errors++
+    }
   }
 
   return NextResponse.json({
