@@ -1,12 +1,13 @@
 import Parser from 'rss-parser'
 import type { RawArticle } from './types'
 
-const parser = new Parser({ timeout: 10000 })
+const parser = new Parser({
+  timeout: 10000,
+  headers: { 'User-Agent': 'Mozilla/5.0 (compatible; medical-news-agent/1.0)' },
+})
 
 export async function crawlNIH(): Promise<RawArticle[]> {
-  const feed = await parser.parseURL(
-    'https://newsinhealth.nih.gov/feeds/all.rss'
-  )
+  const feed = await parser.parseURL('https://www.sciencedaily.com/rss/health_medicine.xml')
   return feed.items
     .slice(0, 20)
     .map((item) => ({
