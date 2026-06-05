@@ -31,9 +31,26 @@ async function handleCollect() {
     .in('url', urls)
 
   const existingUrls = new Set((existing || []).map((r: { url: string }) => r.url))
-  const newArticles = rawArticles
-    .filter((a) => a.url && !existingUrls.has(a.url))
-    .slice(0, 30)
+  const freshArticles = rawArticles.filter((a) => a.url && !existingUrls.has(a.url))
+
+  // 소스별로 최대 7개씩 균등 선택 (총 최대 49개)
+  const bySource = new Map<string, typeof freshArticles>()
+  for (const a of freshArticles) {
+    if (!bySource.has(a.source)) bySource.set(a.source, [])
+    bySource.get(a.source)!.push(a)
+  }
+  const newArticles: typeof freshArticles = []
+  let added = true
+  while (added && newArticles.length < 49) {
+    added = false
+    for (const [, items] of bySource) {
+      if (items.length > 0) {
+        newArticles.push(items.shift()!)
+        added = true
+        if (newArticles.length >= 49) break
+      }
+    }
+  }
 
   const hasOpenRouter = !!process.env.OPENROUTER_API_KEY
   let saved = 0
